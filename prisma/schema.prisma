@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User model for OAuth-based authentication
+model User {
+  id            String   @id @default(uuid()) // OAuth user ID (e.g., from provider)
+  email         String   @unique
+  name          String
+  image         String?  // Optional, in case some users don't have a profile image
+  emailVerified Boolean
+  userToken     String?  @unique // Optional token for authentication/session
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  pages         Page[]   // Relation to pages created by the user
+  accounts      Account[]
+  sessions      Session[]
+}
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("session")
+}
+model Account {
+  id           String    @id @default(cuid())
+  accountId    String
+  providerId   String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken  String?
+  refreshToken String?
+  idToken      String?
+  expiresAt    DateTime?
+  password     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  @@map("account")
+}
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+  @@map("verification")
+}
+
+
+// Page model to organize notes, with public/private flag
+model Page {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String   @default("Untitled Page")
+  isPublic  Boolean  @default(false) // Public or private flag for the page
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notes     Note[]   // Relation to notes in this page
+}
+
+// Note model to store Editor.js JSON content
+model Note {
+  id        String   @id @default(uuid())
+  pageId    String      @map("page_id")
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  content   Json     // Editor.js JSON object
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

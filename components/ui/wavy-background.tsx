@@ -13,8 +13,8 @@ export const BreathingBlobBackground = ({
   speed = "fast",
   blobOpacity = 0.7,
   blobCount = 3,
-  fadeHeight = 200, // Height of the fade effect in pixels
-  fadeOpacity = 0.9, // How strong the fade should be (0-1)
+  fadeHeight = 200,
+  fadeOpacity = 0.9,
   ...props
 }: {
   children?: any;
@@ -30,10 +30,91 @@ export const BreathingBlobBackground = ({
   fadeOpacity?: number;
   [key: string]: any;
 }) => {
+  const [isFirefox, setIsFirefox] = useState(false);
+  const [isSafari, setIsSafari] = useState(false);
+  
+  // Detect Firefox and Safari immediately
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      setIsFirefox(userAgent.includes('firefox'));
+      setIsSafari(userAgent.includes("safari") && !userAgent.includes("chrome"));
+    }
+  }, []);
+
+  // If Firefox, return just the container with background color - no canvas, no animations
+  if (isFirefox) {
+    return (
+      <div className="relative w-full">
+        <div
+          className={cn(
+            "relative h-[85vh] w-full flex flex-col items-center justify-center",
+            containerClassName
+          )}
+          style={{
+            backgroundColor: backgroundFill || "#0a0a0a"
+          }}
+        >
+          <div className={cn("relative z-10 w-full", className)} {...props}>
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // For non-Firefox browsers, render the full blob animation
+  return <ActualBlobBackground 
+    colors={colors}
+    backgroundFill={backgroundFill}
+    blur={blur}
+    speed={speed}
+    blobOpacity={blobOpacity}
+    blobCount={blobCount}
+    fadeHeight={fadeHeight}
+    fadeOpacity={fadeOpacity}
+    className={className}
+    containerClassName={containerClassName}
+    isSafari={isSafari}
+    {...props}
+  >
+    {children}
+  </ActualBlobBackground>;
+};
+
+// Separate component for the actual blob animation (non-Firefox browsers)
+const ActualBlobBackground = ({
+  children,
+  className,
+  containerClassName,
+  colors,
+  backgroundFill,
+  blur = 40,
+  speed = "fast",
+  blobOpacity = 0.7,
+  blobCount = 3,
+  fadeHeight = 200,
+  fadeOpacity = 0.9,
+  isSafari,
+  ...props
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  containerClassName?: string;
+  colors?: string[];
+  backgroundFill?: string;
+  blur?: number;
+  speed?: "slow" | "fast";
+  blobOpacity?: number;
+  blobCount?: number;
+  fadeHeight?: number;
+  fadeOpacity?: number;
+  isSafari?: boolean;
+  [key: string]: any;
+}) => {
   const noise = createNoise3D();
   let w: number, h: number, nt: number, ctx: any, canvas: any;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isSafari, setIsSafari] = useState(false);
   let animationId: number;
 
   const getSpeed = () => {
@@ -122,7 +203,7 @@ export const BreathingBlobBackground = ({
         // Center nucleus - bright contrasting color (amber/orange)
         colorIndex = 4; 
       } else {
-        // Outer layers progress through the pink/purple gradient
+        // Outer layers progress through the gradient
         colorIndex = (blob.layers - layer) % 4;
       }
       
@@ -215,26 +296,8 @@ export const BreathingBlobBackground = ({
     animationId = requestAnimationFrame(render);
   };
 
-  useEffect(() => {
-    const cleanup = init();
-    return () => {
-      cancelAnimationFrame(animationId);
-      if (cleanup) cleanup();
-    };
-  }, [isSafari]);
-
-  // Set up Safari detection
-  useEffect(() => {
-    setIsSafari(
-      typeof window !== "undefined" &&
-      navigator.userAgent.includes("Safari") &&
-      !navigator.userAgent.includes("Chrome")
-    );
-  }, []);
-
   // Initialize and clean up canvas
   useEffect(() => {
-    // Only initialize if we have the canvas ref and Safari detection is complete
     if (canvasRef.current) {
       const cleanup = init();
       return () => {

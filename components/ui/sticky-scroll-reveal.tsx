@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 export const StickyScroll = ({
   content,
   contentClassName,
+  autoScrollInterval = 2000, // 2 seconds by default
 }: {
   content: {
     title: string;
@@ -12,43 +13,57 @@ export const StickyScroll = ({
     content?: React.ReactNode | any;
   }[];
   contentClassName?: string;
+  autoScrollInterval?: number;
 }) => {
   const [activeCard, setActiveCard] = useState(0);
+  const autoScrollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Auto-scroll functionality
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const startAutoScroll = () => {
+      autoScrollTimerRef.current = setInterval(() => {
+        setActiveCard((prev) => (prev + 1) % content.length);
+      }, autoScrollInterval);
+    };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = cardRefs.current.findIndex(
-              (ref) => ref === entry.target
-            );
-            if (index !== -1) {
-              setActiveCard(index);
-            }
-          }
-        });
-      },
-      {
-        root: container,
-        rootMargin: "-10% 0px -70% 0px",
-        threshold: 0.1,
-      }
-    );
-
-    cardRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
+    startAutoScroll();
 
     return () => {
-      cardRefs.current.forEach((ref) => {
-        if (ref) observer.unobserve(ref);
-      });
+      if (autoScrollTimerRef.current) {
+        clearInterval(autoScrollTimerRef.current);
+      }
+    };
+  }, [autoScrollInterval, content.length]);
+
+  // Auto-scroll the content area when activeCard changes
+  useEffect(() => {
+    if (containerRef.current && cardRefs.current[activeCard]) {
+      const container = containerRef.current;
+      const activeElement = cardRefs.current[activeCard];
+      
+      if (activeElement) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = activeElement.getBoundingClientRect();
+        const relativeTop = elementRect.top - containerRect.top;
+        const currentScrollTop = container.scrollTop;
+        const targetScrollTop = currentScrollTop + relativeTop;
+        
+        container.scrollTo({
+          top: targetScrollTop,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [activeCard]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoScrollTimerRef.current) {
+        clearInterval(autoScrollTimerRef.current);
+      }
     };
   }, []);
 

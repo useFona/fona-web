@@ -20,7 +20,7 @@ export const Extension = () => {
           </h1>
           
           {/* Description */}
-          <p className="text-gray-200 text-lg font-semibold font-inter mt-4 leading-relaxed mb-4">
+          <p className="text-gray-200 text-lg font-semibold font-inter mt-4 leading-relaxed mb-12">
             Add Fona's lightweight extension to start making organized notes without breaking your flow!
           </p>
           

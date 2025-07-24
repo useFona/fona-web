@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 import { ChromeIcon } from "../ui/ChromeIcon";
 import { RiFirefoxBrowserFill as FirefoxIcon } from "../ui/FireFoxIcon";
 
-// Browser detection function
+// Browser detection function - matches the one in BreathingBlobBackground
 const detectBrowser = () => {
-  if (typeof window === 'undefined') return 'chrome'; // Default for SSR
+  if (typeof window === 'undefined') return null;
   
   const userAgent = window.navigator.userAgent.toLowerCase();
   
@@ -21,15 +21,20 @@ const detectBrowser = () => {
   } else if (userAgent.includes('edg')) {
     return 'edge';
   } else {
-    return 'chrome'; // Default fallback
+    return 'chrome'; // fallback to chrome
   }
 };
 
 export function Header() {
-  const [browser, setBrowser] = useState('chrome');
+  const [browser, setBrowser] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setBrowser(detectBrowser());
+    setIsClient(true);
+    // Add a small delay to make the animation more noticeable
+    setTimeout(() => {
+      setBrowser(detectBrowser());
+    }, 300);
   }, []);
 
   const handleChromeClick = () => {
@@ -58,12 +63,13 @@ export function Header() {
         </button>
       );
     } else {
+      // Default to Chrome (including fallback)
       return (
         <button
           onClick={handleChromeClick}
           className="group flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-[#FFBB94] via-[#DC586D] to-[#FB9590] text-[#0a0a0a] font-bold rounded-full hover:opacity-90 transition-all duration-200 transform hover:scale-105 border-3 border-[#0a0a0a] overflow-hidden min-w-[180px] sm:min-w-[220px] h-12 sm:h-14 px-4 sm:px-6"
         >
-          <ChromeIcon className="w-7 h-7 text-[#0a0a0a] font-extrabold " />
+          <ChromeIcon className="w-7 h-7 text-[#0a0a0a] font-extrabold" />
           <div className="text-left flex-1">
             <div className="font-bold text-xl font-inter">
               Add to Chrome
@@ -85,10 +91,21 @@ export function Header() {
       <p className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-white font-bold inter-var text-center px-4">
         Matters!
       </p>
-      <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-8">
-        {/* Get Started Button */}
+      
+      {/* Button Container with conditional layout */}
+      <div className={`flex gap-6 justify-center items-center mt-8 transition-all duration-700 ease-in-out ${
+        !isClient || !browser 
+          ? 'flex-col' 
+          : 'flex-col sm:flex-row'
+      }`}>
+        
+        {/* Get Started Button - always visible */}
         <button 
-          className="group relative bg-gradient-to-r from-[#FFBB94] via-[#DC586D] to-[#FB9590] text-[#0a0a0a] font-bold text-lg sm:text-2xl py-2 sm:py-3 px-6 sm:px-8 rounded-full hover:opacity-90 transition-all duration-200 transform hover:scale-105 border-3 border-[#0a0a0a] overflow-hidden w-40 sm:w-48 h-12 sm:h-14 flex items-center justify-center"
+          className={`group relative bg-gradient-to-r from-[#FFBB94] via-[#DC586D] to-[#FB9590] text-[#0a0a0a] font-bold text-lg sm:text-2xl py-2 sm:py-3 px-6 sm:px-8 rounded-full hover:opacity-90 transition-all duration-700 transform hover:scale-105 border-3 border-[#0a0a0a] overflow-hidden w-40 sm:w-48 h-12 sm:h-14 flex items-center justify-center ${
+            !isClient || !browser 
+              ? 'order-1' 
+              : 'order-1 sm:order-1'
+          }`}
           onClick={() => window.location.href = "/dashboard"}
         >
           <span className="absolute transition-all duration-300 group-hover:-translate-x-4 group-hover:opacity-0">
@@ -100,8 +117,14 @@ export function Header() {
           />
         </button>
 
-        {/* Dynamic Browser Button */}
-        {getBrowserButton()}
+        {/* Browser Button - appears with animation */}
+        <div className={`transition-all duration-700 ease-in-out ${
+          !isClient || !browser 
+            ? 'opacity-0 transform scale-95 translate-y-2' 
+            : 'opacity-100 transform scale-100 translate-y-0'
+        } order-2`}>
+          {(isClient && browser) && getBrowserButton()}
+        </div>
       </div>
     </BreathingBlobBackground>
   );

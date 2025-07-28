@@ -5,10 +5,16 @@ import generateUserToken from "@/action/generateUserToken";
 import { createAuthMiddleware } from "better-auth/api";
 
 export const auth = betterAuth({
-  appName: "better-notes",
+  appName: "fona",
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: process.env.NODE_ENV === 'production',
+      domain: "meet-jain.in"
+    }
+  },
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,

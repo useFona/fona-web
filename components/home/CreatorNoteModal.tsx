@@ -46,12 +46,12 @@ const CreatorNoteModal: React.FC<CreatorNoteModalProps> = ({ isOpen, onClose }) 
   if (!isOpen) return null;
 
   const modalContent = (
-    <div 
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" 
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
       style={{ zIndex: 99999 }}
       onClick={onClose}
     >
-      <div 
+      <div
         ref={modalRef}
         className="relative w-full max-w-7xl h-[85vh] bg-[#0a0a0a] rounded-lg border border-white/10 shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
@@ -85,7 +85,7 @@ const CreatorNoteModal: React.FC<CreatorNoteModalProps> = ({ isOpen, onClose }) 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg"></div>
               </div>
-              
+
               {/* Social Links */}
               <div className="mt-6 flex justify-center gap-4">
                 <a
@@ -123,38 +123,38 @@ const CreatorNoteModal: React.FC<CreatorNoteModalProps> = ({ isOpen, onClose }) 
               <div className="text-center mb-6">
                 <ComicText fontSize={2}>Meet Jain</ComicText>
               </div>
-              
+
               <div>
                 <div className="prose prose-invert max-w-none space-y-4 text-gray-300 font-inter leading-relaxed">
                   <p>
                     Welcome to <span className="text-[#DC586D] font-semibold">Fona</span>! I'm thrilled you're here exploring this project.
                   </p>
-                  
+
                   <p>
                     I am a full stack developer who is trying to make small changes in the ecosystem which can lead to a greater change, and one of my trials for making change comes out to be <span className="text-[#DC586D] font-semibold">FONA</span>!
                   </p>
-                  
+
                   <p>
                     The project clicked to me when I was reading K8's docs and since it was not very easy to gulp, I wanted to make some notes or highlight some stuff. Using Notion or even a pop-up based notes app was a hassle — it broke my flow of reading and was just bad while taking care of organizing notes as well!
                   </p>
-                  
+
                   <p>
                     I lurked a bit to find an alternative but none of them fits my needs, so then I said let's make a solution. After quite an effort of two weeks or three, I created Fona while keeping one thing in mind: it's not replacing your old favorite notes app but, trying to help you to start making notes while not even thinking about how they will look, copy & paste or even navigation. It's my approach to help users to attain flow, save time, and clear that small friction.
                   </p>
-                  
+
                   <p>
                     I hope you liked my work and feel free to experiment, come up with changes, found any bug create issues and contribute. It will be absolutely the best if we make this better together!
                   </p>
-                  
+
                   <p className="text-[#FFBB94] font-medium">
                     Thanks for checking it out — I'll keep improving and adding new features. If it helps you, consider supporting the project! ✨
                   </p>
                 </div>
               </div>
-              
+
               <div className="pt-4 border-t border-white/10">
                 <p className="text-sm text-gray-500 text-center">
-                  Check out my <a href="https://meet-jain.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-[#DC586D] hover:underline">portfolio</a> for more projects and work
+                  Check out my <a href="https://meet-jain.in/" target="_blank" rel="noopener noreferrer" className="text-[#DC586D] hover:underline">portfolio</a> for more projects and work
                 </p>
               </div>
             </div>

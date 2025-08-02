@@ -9,9 +9,9 @@ import { RiFirefoxBrowserFill as FirefoxIcon } from "../ui/FireFoxIcon";
 // Browser detection function - matches the one in BreathingBlobBackground
 const detectBrowser = () => {
   if (typeof window === 'undefined') return null;
-  
+
   const userAgent = window.navigator.userAgent.toLowerCase();
-  
+
   if (userAgent.includes('firefox')) {
     return 'firefox';
   } else if (userAgent.includes('chrome') && !userAgent.includes('edg')) {
@@ -44,7 +44,7 @@ export function Header() {
 
   const handleFirefoxClick = () => {
     // Add your Firefox Add-ons URL here
-    window.open('https://addons.mozilla.org', '_blank');
+    window.open('https://addons.mozilla.org/en-US/firefox/addon/fona', '_blank');
   };
 
   const getBrowserButton = () => {
@@ -91,38 +91,35 @@ export function Header() {
       <p className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-white font-bold inter-var text-center px-4">
         Matters!
       </p>
-      
+
       {/* Button Container with conditional layout */}
-      <div className={`flex gap-6 justify-center items-center mt-8 transition-all duration-700 ease-in-out ${
-        !isClient || !browser 
-          ? 'flex-col' 
+      <div className={`flex gap-6 justify-center items-center mt-8 transition-all duration-700 ease-in-out ${!isClient || !browser
+          ? 'flex-col'
           : 'flex-col sm:flex-row'
-      }`}>
-        
+        }`}>
+
         {/* Get Started Button - always visible */}
-        <button 
-          className={`group relative bg-gradient-to-r from-[#FFBB94] via-[#DC586D] to-[#FB9590] text-[#0a0a0a] font-bold text-lg sm:text-2xl py-2 sm:py-3 px-6 sm:px-8 rounded-full hover:opacity-90 transition-all duration-700 transform hover:scale-105 border-3 border-[#0a0a0a] overflow-hidden w-40 sm:w-48 h-12 sm:h-14 flex items-center justify-center ${
-            !isClient || !browser 
-              ? 'order-1' 
+        <button
+          className={`group relative bg-gradient-to-r from-[#FFBB94] via-[#DC586D] to-[#FB9590] text-[#0a0a0a] font-bold text-lg sm:text-2xl py-2 sm:py-3 px-6 sm:px-8 rounded-full hover:opacity-90 transition-all duration-700 transform hover:scale-105 border-3 border-[#0a0a0a] overflow-hidden w-40 sm:w-48 h-12 sm:h-14 flex items-center justify-center ${!isClient || !browser
+              ? 'order-1'
               : 'order-1 sm:order-1'
-          }`}
+            }`}
           onClick={() => window.location.href = "/dashboard"}
         >
           <span className="absolute transition-all duration-300 group-hover:-translate-x-4 group-hover:opacity-0">
             Get Started
           </span>
-          <ArrowRight 
+          <ArrowRight
             className="absolute h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0"
             strokeWidth={2}
           />
         </button>
 
         {/* Browser Button - appears with animation */}
-        <div className={`transition-all duration-700 ease-in-out ${
-          !isClient || !browser 
-            ? 'opacity-0 transform scale-95 translate-y-2' 
+        <div className={`transition-all duration-700 ease-in-out ${!isClient || !browser
+            ? 'opacity-0 transform scale-95 translate-y-2'
             : 'opacity-100 transform scale-100 translate-y-0'
-        } order-2`}>
+          } order-2`}>
           {(isClient && browser) && getBrowserButton()}
         </div>
       </div>

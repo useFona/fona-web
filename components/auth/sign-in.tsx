@@ -18,6 +18,12 @@ const SignIn = () => {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
+  const [isFirefox, setIsFirefox] = useState(false)
+
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent.toLowerCase()
+    setIsFirefox(userAgent.indexOf('firefox') > -1)
+  }, [])
 
   useEffect(() => {
     setError("")
@@ -102,27 +108,29 @@ const SignIn = () => {
             priority
           />
         </div>
-        
+
         {/* Title */}
         <h2 className='text-2xl font-bold text-center text-[#7b7b7d]'>
-          Sign up to create notes with 
+          Sign in to create notes with
         </h2>
         <AuroraText colors={["#FFBB94", "#DC586D", "#FB9590"]} className="font-bold text-4xl font-inter">FONA</AuroraText>
-        
+
         <div className='w-full space-y-4'>
           <FormError message={error} />
           <FormSuccess message={success} />
-          
-          <Button
-            variant='outline'
-            className='w-full flex items-center justify-center gap-2 h-12 text-base text-[#7b7b7d] hover:text-white hover:bg-[#242424] transition-colors bg-[#191919] border-[#292929]'
-            onClick={googleSignIn}
-            disabled={loading}
-          >
-            <FcGoogle className='w-6 h-6' />
-            Continue with Google
-          </Button>
-          
+
+          {!isFirefox && (
+            <Button
+              variant='outline'
+              className='w-full flex items-center justify-center gap-2 h-12 text-base text-[#7b7b7d] hover:text-white hover:bg-[#242424] transition-colors bg-[#191919] border-[#292929]'
+              onClick={googleSignIn}
+              disabled={loading}
+            >
+              <FcGoogle className='w-6 h-6' />
+              Continue with Google
+            </Button>
+          )}
+
           <Button
             variant='outline'
             className='w-full flex items-center justify-center gap-2 h-12 text-base text-[#7b7b7d] hover:text-white hover:bg-[#242424] transition-colors bg-[#191919] border-[#292929]'

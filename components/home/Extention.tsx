@@ -4,7 +4,7 @@ import { RiFirefoxBrowserFill as FirefoxIcon } from "@/components/ui/FireFoxIcon
 
 export const Extension = () => {
   const handleChromeClick = () => {
-    window.open('https://xyz-chrome-url.com', '_blank');
+    window.open('https://chromewebstore.google.com/detail/fona/aiacndhhemhiamcjbmncinfbhnidfdgm', '_blank');
   };
 
   const handleFirefoxClick = () => {

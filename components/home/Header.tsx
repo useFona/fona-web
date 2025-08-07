@@ -39,7 +39,7 @@ export function Header() {
 
   const handleChromeClick = () => {
     // Add your Chrome Web Store URL here
-    window.open('https://chrome.google.com/webstore', '_blank');
+    window.open('https://chromewebstore.google.com/detail/fona/aiacndhhemhiamcjbmncinfbhnidfdgm', '_blank');
   };
 
   const handleFirefoxClick = () => {

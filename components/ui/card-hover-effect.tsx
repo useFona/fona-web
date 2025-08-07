@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { Calendar } from "lucide-react";
+import { Calendar, X } from "lucide-react";
 
 export const HoverEffect = ({
   items,
@@ -11,10 +11,14 @@ export const HoverEffect = ({
     title: string;
     description: string;
     link: string;
+    id?: string;
+    onDelete?: (id: string, e: React.MouseEvent) => void;
+    isDeleting?: boolean;
   }[];
   className?: string;
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -27,6 +31,7 @@ export const HoverEffect = ({
       return dateString;
     }
   };
+
   return (
     <div
       className={cn(
@@ -36,8 +41,7 @@ export const HoverEffect = ({
       )}
     >
       {items.map((item, idx) => (
-        <a
-          href={item?.link}
+        <div
           key={item?.link}
           className="relative group block p-0.5 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
@@ -63,12 +67,50 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card>
-            <CardTitle>{item.title}</CardTitle>
-            <hr className="my-2 border-t border-gray-700 opacity-50 mx-auto w-[90%] fading-line" />
-            <CardDescription>{formatDate(item.description)}</CardDescription>
-          </Card>
-        </a>
+          
+          <a href={item?.link} className="block h-full">
+            <Card>
+              {/* Delete Button */}
+              {item.onDelete && item.id && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    item.onDelete!(item.id!, e);
+                  }}
+                  disabled={item.isDeleting}
+                  className="absolute top-2 right-2 z-30 transition-all duration-200 hover:scale-110"
+                  style={{
+                    backgroundColor: '#2d1b1b',
+                    color: '#ff6b6b',
+                    border: '1px solid #4a2626',
+                    borderRadius: '50%',
+                    cursor: item.isDeleting ? 'not-allowed' : 'pointer',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: item.isDeleting ? 0.5 : 1,
+                  }}
+                  title={item.isDeleting ? "Deleting..." : "Delete page"}
+                >
+                  {item.isDeleting ? (
+                    <div className="animate-spin">
+                      <div className="w-2 h-2 border border-current border-t-transparent rounded-full"></div>
+                    </div>
+                  ) : (
+                    <X size={12} />
+                  )}
+                </button>
+              )}
+              
+              <CardTitle>{item.title}</CardTitle>
+              <hr className="my-2 border-t border-gray-700 opacity-50 mx-auto w-[90%] fading-line" />
+              <CardDescription>{formatDate(item.description)}</CardDescription>
+            </Card>
+          </a>
+        </div>
       ))}
     </div>
   );

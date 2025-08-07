@@ -20,6 +20,7 @@ const Pages = () => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'newest'>('newest');
+  const [deletingPageId, setDeletingPageId] = useState<string | null>(null);
 
   // Fetch all pages
   const fetchPages = async () => {
@@ -48,6 +49,41 @@ const Pages = () => {
       setPages([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Delete page function
+  const deletePage = async (pageId: string, e: React.MouseEvent) => {
+    e.preventDefault(); 
+    e.stopPropagation(); 
+    
+    if (!confirm('Are you sure you want to delete this page? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setDeletingPageId(pageId);
+      console.log('Deleting page:', pageId);
+      
+      const response = await fetch(`/api/pages/${pageId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Delete API Error Response:', errorText);
+        throw new Error(`Failed to delete page: ${response.status} ${response.statusText}`);
+      }
+
+      // Remove the page from local state
+      setPages(prevPages => prevPages.filter(page => page.id !== pageId));
+      console.log('Page deleted successfully');
+      
+    } catch (err) {
+      console.error('Error deleting page:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred while deleting the page');
+    } finally {
+      setDeletingPageId(null);
     }
   };
 
@@ -83,6 +119,9 @@ const Pages = () => {
     title: page.title || 'Untitled Page',
     description: page.createdAt || 'No content available',
     link: `/editor/${page.id}`,
+    id: page.id,
+    onDelete: deletePage,
+    isDeleting: deletingPageId === page.id,
   }));
 
   const handleSearch = () => {

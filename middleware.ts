@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/dashboard" || pathname.startsWith("/editor/")) {
     const sessionCookie = getSessionCookie(request);
     if (!sessionCookie) {
-      return NextResponse.redirect(new URL("/signin", request.url));
+      return NextResponse.redirect(new URL("/signup", request.url));
     }
   }
 

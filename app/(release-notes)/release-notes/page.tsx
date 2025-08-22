@@ -97,7 +97,7 @@ export default function ReleaseNotesPage() {
                   <div className="bg-gradient-to-r from-[#FFBB94] via-[#DC586D] to-[#FB9590] p-2 rounded-lg">
                     <Calendar className="w-5 h-5 text-[#0a0a0a]" />
                   </div>
-                  <span className="text-lg text-[#ccc]">Date to be added</span>
+                  <span className="text-lg text-[#ccc]">23-August-2025</span>
                 </div>
               </div>
 
